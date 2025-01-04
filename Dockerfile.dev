@@ -1,0 +1,32 @@
+# Use the official Node.js image for version 22
+FROM node:20-alpine
+
+# Create a non-root user to avoid permission issues
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json files to install dependencies
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Change ownership of the working directory to the non-root user
+RUN chown -R appuser:appgroup /app
+
+# Set execute permission for TypeScript files
+RUN chmod +x ./src/server/index.ts
+
+# Switch to the non-root user
+USER appuser
+
+# Expose the port your app runs on (adjust if different)
+EXPOSE 3000
+
+# Start the Node.js app
+CMD ["npm", "run", "dev"]

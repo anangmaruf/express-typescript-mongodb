@@ -1,0 +1,15 @@
+version: "4"
+
+services:
+  jweb-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: "jweb-api"
+    ports:
+      - "${PORT}:3000" # Map the PORT environment variable from .env
+    volumes:
+      - .:/app
+    environment:
+      - MONGODB_URL=${MONGODB_URL} # Use the MONGODB_URL environment variable from .env
+    command: npm run dev # Make sure it runs the "start" script which looks for dist/index.js
